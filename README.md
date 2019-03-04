@@ -41,7 +41,7 @@ Reason - Haven;t learnt how to add tests till now.
 ## Problems in the current code
 
 [] Some CSS are not done properly - 
-(./public/images/img1.png)
+![Screenshot](./public/Images/img1.png)
 
 
 
