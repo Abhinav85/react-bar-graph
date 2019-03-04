@@ -1,97 +1,106 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './App.css';
-import Line from './Line';
-import BarText from './BarText';
-import Bar from './Bar';
+import Bar from './Components/Bar';
+import BarInfo from './Components/BarInfo';
 
-const graphData = {
-  height : 20,
-  width : 90,
-  data : [
-    {
-      title : 'Title 1',
-      value : 23,
-      color : 'orange'
-    },
-    {
-      title : 'Title 2',
-      value : 12,
-      color : 'blue'
-    },
-    {
-      title : 'Title 3',
-      value : 45,
-      color : 'grey'
-    },
-    {
-      title : 'Title 4',
-      value : 67
-    },
-    {
-      title : 'Title 5',
-      value : 1
-    },
-    {
-      title : 'Title 6',
-      value : 100
-    },
-  ],
-  yAxisLabel : [
-    10.20,30
-  ],
 
-}
+// The Input is supposed to be an object graphData containing the following information
+// 1. A key width, it can go from 0 -100
+// 2. An array data - each object in the array i.e the datum needs to contain two keys
+// A title and value. You can also provide placeholder (Extra information) as well as color.
 
 class App extends Component {
 
-
-  renderLines = () => {
-    return Array(30).fill(null).map((el,i) =>(
-      <Line top = {i*10} key = {i}/>
-    ))
+  constructor(props){
+    super(props);
+    this.state = {
+      selectedDatum : {},
+      graphData : props.graphData
+    }
   }
 
-  renderBars = (data) =>{
-    let sumOfAllValues = data.reduce((acc,datum) => {
+  // The Bar are shown as the function of the percent of the net accumulated value of all the input.
+   // This function renders the bars as well as the title below it.
+
+  renderBars = () =>{
+    let sumOfAllValues = this.state.graphData.data.reduce((acc,datum) => {
       return acc + datum.value
     },0);
   
     return(
-      graphData.data.map((datum,i) => {
+      this.state.graphData.data.map((datum,i) => {
         let percent = (datum.value/sumOfAllValues)*100;
-        return <Bar percent = {percent} key = {datum.title} color = {datum.color} value = {datum.value} width = {graphData.width}/>
+        return <Bar percent = {percent} 
+                    key = {datum.title} 
+                    color = {datum.color} 
+                    value = {datum.value} 
+                    width = {this.state.graphData.width} 
+                    title = {datum.title} 
+                    placeholderData = {datum.placeholderData} 
+                    setDataIntoBarInfo = {this.setDataIntoBarInfo}
+                    
+                  />
       })
     )
   }
 
+  // This function renders the Markers
   renderMarkers = () => {
-    if(graphData.yAxisLabel)
     return(
-      Array(graphData.data.length).fill(null).map((elem,i) =>(
-        <div className = 'marker' style = {{top : `${100 - i*10}%`}} key = {`marker+${i*10}`}>{`${i*10}`}</div>
+      Array(10).fill(null).map((elem,i) =>(
+        <div className = 'marker' style = {{top : `${i*10}%`}} key = {`marker+${i*10}`}>{`${90 - i*10}`}</div>
       ))
     )
   }
+
+  // This function render the information into the bar-info div
+
+  setDataIntoBarInfo = ({value,placeholderData,color}) => {
+    this.setState({
+      selectedDatum : {value,placeholderData,color}
+    })
+  }
+
+  // This renders the bar-chart info
+  renderBarInfo = () =>{
+    if(this.state.selectedDatum === null){
+    return (<div></div>);
+    }else{
+      return(<BarInfo placeholderData = {this.state.selectedDatum.placeholderData} value = {this.state.selectedDatum.value} color = {this.state.selectedDatum.color}/>)
+    }
+  }
+
   render() {
     return (
       <div className="graph-wrapper">
         <div className = 'graph'>
-        <div className = 'marker-container'>
-              {this.renderMarkers()}  
+          <div className = 'graph-header'>
+            <div className = 'bar-title'>
+              React Bar Graph
             </div>
-          <div className = 'bar-lines-container'>
-            {/* {this.renderLines()} */}
-            <div className = 'bar-div-container'>
-              {this.renderBars(graphData.data)}
+            <div className = 'graphInfo'>
+              {this.renderBarInfo()}
             </div>
-           
-            
           </div>
-          <BarText data = {graphData.data} width = {graphData.width} />
+          
+          <div className = 'marker-container'>
+              {this.renderMarkers()}  
+          </div>
+          
+          <div className = 'bar-lines-container'>
+            <div className = 'bar-div-container'>
+              {this.renderBars()}
+            </div>  
+          </div>
         </div>
       </div>
     );
   }
 }
+
+App.propTypes = {
+  graphData : PropTypes.object
+};
 
 export default App;

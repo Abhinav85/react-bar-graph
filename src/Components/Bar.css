@@ -1,0 +1,35 @@
+.bar{
+    position: relative;
+    height: inherit;
+    margin-top: auto;
+    justify-self: center
+}
+
+.percent-data{
+    display: none;
+}
+
+.bar:hover{
+    opacity: 0.6;
+}
+
+.bar:hover .percent-data{
+    display: block;
+    width: 100%;
+    position: absolute;
+}
+
+.bar-complete{
+    height: 100%;
+    display: grid;
+    grid-template-rows: 9fr 1fr;
+}
+
+.bar-text{
+    background: #dddddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
